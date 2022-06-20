@@ -1,0 +1,42 @@
+
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <Head>
+                </Head>
+                <br /><br /><br /><br /><br />
+                <div class="container mt-4">
+                    <div class="row">
+                        <div class="col text-center">
+                            <p>Atvainojiet, šeit nav nekā.</p>
+                            <br />
+                            <p>
+                                Vai ir kāda aizķeršanās? <a href="/contact" style="color:blue">Sazinies ar Mums</a>
+                            </p>
+                            <br />
+                            <p class="lead">
+                                <a class="btn btn-primary btn-lg text-white" href="/">Sākuma Lapa</a>
+                            </p>
+                            <br />
+                            <p class="lead">
+                                <a class="btn btn-primary btn-lg text-white" href="/all">All Product</a>
+                            </p>
+                            <br />
+                            <p class="lead">
+                                <a class="btn btn-primary btn-lg text-white" href="/cart">Jūsu Grozs</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+               
+
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+

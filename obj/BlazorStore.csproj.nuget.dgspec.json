@@ -1,0 +1,125 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Abool\\OneDrive - rtucloud1\\Dokumenti\\GitHub\\Web-storeey\\BlazorStore.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Abool\\OneDrive - rtucloud1\\Dokumenti\\GitHub\\Web-storeey\\BlazorStore.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Abool\\OneDrive - rtucloud1\\Dokumenti\\GitHub\\Web-storeey\\BlazorStore.csproj",
+        "projectName": "BlazorStore",
+        "projectPath": "C:\\Users\\Abool\\OneDrive - rtucloud1\\Dokumenti\\GitHub\\Web-storeey\\BlazorStore.csproj",
+        "packagesPath": "C:\\Users\\Abool\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Abool\\OneDrive - rtucloud1\\Dokumenti\\GitHub\\Web-storeey\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Abool\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "BlazingComponents.Summernote": {
+              "target": "Package",
+              "version": "[0.0.6, )"
+            },
+            "MailKit": {
+              "target": "Package",
+              "version": "[2.12.0, )"
+            },
+            "Majorsoft.Blazor.Components.Modal": {
+              "target": "Package",
+              "version": "[1.3.0, )"
+            },
+            "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.6, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[5.0.6, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": {
+              "target": "Package",
+              "version": "[5.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[5.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "target": "Package",
+              "version": "[5.0.6, )"
+            },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.10.13, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[5.0.2, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[5.0.5, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[5.0.6, )"
+            },
+            "Radzen.Blazor": {
+              "target": "Package",
+              "version": "[3.6.0, )"
+            },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[39.49.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

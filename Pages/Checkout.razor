@@ -1,0 +1,365 @@
+﻿@page "/checkout"
+
+@using BlazorStore.Models
+@using BlazorStore.Data
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Identity
+@using BlazorStore.Services
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Identity.UI.Services;
+@using Microsoft.AspNetCore.Http;
+@using System.Threading;
+@using Microsoft.AspNetCore.WebUtilities;
+@using System.Text.Encodings.Web;
+@using System.Text;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Routing;
+@inject NavigationManager MyNavigationManager
+@inject IUserDetector _userDetector
+@inject IHttpContextAccessor _httpContextAccessor
+@inject ApplicationDbContext _context
+@inject AllItemStateModel AllItemStateModel
+@inject IImageService _imageService
+@inject IJSRuntime JSRuntime
+@inject SignInManager<CustomUser> _signInManager
+@inject UserManager<CustomUser> _userManager
+@inject IEmailSender _emailSender
+@inject LinkGenerator _generator
+
+@if (CartItem is null)
+{
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-icon">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <!-- End Preloader -->
+}
+else
+{
+    <Head>
+    </Head>
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="bread-inner">
+                        <ul class="bread-list">
+                            <li><a href="/">Sākums<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="/checkout"></a>Pasūtījums</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Breadcrumbs -->
+    <!-- Start Checkout -->
+    <section class="shop checkout section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-12">
+                    <div class="checkout-form">
+                        <h2>Veiciet savu pasūtījumu šeit</h2>
+                        <p style="margin-bottom:0;">Lūdzu reģistrējieties lai veiktu pasūtījumu ātrāk</p>
+                        <p style="margin-bottom:20px;"><span class="text-danger">* </span>Nepieciešams aizpildīt</p>
+                        <!-- Form -->
+                        <EditForm Model="InformationCheckOut" OnValidSubmit=@ProcessToCheckOutAsync class="form">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>Vārds<span>*</span></label>
+                                        <input type="text" @bind="InformationCheckOut.FirstName" placeholder="" required="required">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>Uzvārds<span>*</span></label>
+                                        <input type="text" @bind="InformationCheckOut.LastName" placeholder="" required="required">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>E-pasts<span>*</span></label>
+                                        <input type="email" @bind="InformationCheckOut.Email" placeholder="" required="required">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>Telefona numurs<span>*</span></label>
+                                        <input type="text" @bind="InformationCheckOut.PhoneNumber" placeholder="" required="required">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>Valsts<span>*</span></label>
+                                        <select class="form-control" @bind="InformationCheckOut.State" id="State" @onclick="ChooseState">
+                                            <option value="" id="State" selected="selected">Izvēlieties valsti</option>
+                                            <option value="Latvija">Latvija</option>
+                                            <option value="Lietuva">Lietuva</option>
+                                            <option value="Igaunija">Igaunija</option>
+                                            </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>Pilsēta<span>*</span></label>
+                                        <select class="form-control" id="City" @bind="InformationCheckOut.City">
+                                            <option id="City" value="" selected="selected">Izvēlieties pilsētu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>Adrese<span>*</span></label>
+                                        <input type="text" @bind="InformationCheckOut.Address" placeholder="" required="required">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label>Pasta indeks<span>*</span></label>
+                                        <input type="text" @bind="InformationCheckOut.Zipcode" placeholder="" required="required">
+                                    </div>
+                                </div>
+                                @if (!_httpContextAccessor.HttpContext.User.IsInRole("NormalUser"))
+                                {
+                                    <div class="col-12">
+                                        <div class="form-group create-account">
+                                            <input @bind="InformationCheckOut.CreateAccount" type="checkbox">
+                                            <label>Izveidot kontu?</label>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="col-12 mt-2">
+                                    <div class="form-group">
+                                        <label>Vieta Jūsu Piezīmēm</label>
+                                        <input type="text" @bind="InformationCheckOut.Notes" placeholder="">
+                                    </div>
+                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade p-0" style=" text-align: center;" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog  modal-dialog-centered" role="document" style=" text-align: center;">
+                                        <div class="modal-content custom-modal">
+                                            <div class="row mt-2">
+                                                <div class="col text-left">
+                                                    <h5 class="modal-title" style="margin-left:20px" id="exampleModalLabel"></h5>
+                                                </div>
+                                                <div class="col-2 text-right">
+                                                    <button type="button" style="margin-right:20px;border:0px;" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-body text-center">
+                                                <hr />
+                                                <h5>Vai esi drošs ka vēlies turpināt?</h5>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <button type="submit" class="btn mb-2">Jā, esmu drošs</button>
+
+                                                        <button type="button" class="btn" data-dismiss="modal">Nē, man vēl jāpārbauda informācija</button>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </EditForm>
+                        <!--/ End Form -->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-12">
+                    <p>* Bezmaksas piegāde pasūtījumiem virs €500</p>
+                    <div class="order-details">
+                        <!-- Order Widget -->
+                        <div class="single-widget">
+                            <h2>CART  TOTALS</h2>
+                            <div class="content">
+                                <ul>
+                                    @if (CartItem is not null)
+                                    {
+                                        Item_total_price = 0;
+                                        foreach (var item in CartItem)
+                                        {
+                                            Item_total_price += float.Parse(item.Price) * (float)item.Quantity;
+                                        }
+                                    }
+                                    <li>Sub Total<span>€@Item_total_price.ToString("0.##")</span></li>
+                                    @if (Item_total_price >= (float)500)
+                                    {
+                                        total = Item_total_price;
+                                        <li>(+) Sūtīšana<span>Bezmaksas</span></li>
+                                        <li class="last">KOPĀ<span>€@total.ToString("0.##")</span></li>
+                                    }
+                                    else if (CartItem.Count == 0)
+                                    {
+                                        <li>Sūtīšana<span>€0.00</span></li>
+                                        <li class="last">Jums jāmaksā<span>€0.00</span></li>
+                                    }
+                                    else
+                                    {
+                                        total = (Item_total_price + (float)20);
+                                        <li>(+) Sūtīšana<span>€20.00</span></li>
+                                        <li class="last">KOPĀ<span>€@((total).ToString("0.##"))</span></li>
+
+                                    }
+
+
+                                </ul>
+                            </div>
+                        </div>
+                        <!--/ End Order Widget -->
+                        <!-- Payment Method Widget -->
+                        <div class="single-widget payement">
+                            <div class="content">
+                                <img src="images/payment-method.png" alt="#">
+                            </div>
+                        </div>
+                        <!--/ End Payment Method Widget -->
+                        <!-- Button Widget -->
+                        <div class="single-widget get-button">
+                            <div class="content">
+                                <div class="button">
+                                    <button type="button" class="btn" data-toggle="modal" data-target="#exampleModal">
+                                        Uzsākt maksājuma procesu
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/ End Button Widget -->
+                        <!-- Button trigger modal -->
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/ End Checkout -->
+
+
+}
+
+
+
+@code {
+    [Parameter]
+    public List<Models.Cart> CartItem { get; set; }
+    public float total;
+    private Models.InformationCheckOut InformationCheckOut = new();
+    public string IpAddress;
+    public string connectionId;
+    public float Item_total_price;
+
+    protected override void OnInitialized()
+    {
+        GetCart();
+    }
+
+    public void GetCart()
+    {
+        CartItem = _context.Cart.Where(i => i.CustomUserId == _userManager.GetUserId(_httpContextAccessor.HttpContext.User) && !i.IsSold).Include(i => i.Category).ToList();
+    }
+
+
+
+    public async Task ProcessToCheckOutAsync()
+    {
+        if (CartItem.Count >= 1)
+        {
+            if (InformationCheckOut.CreateAccount is true)
+            {
+                IpAddress = _userDetector.GetUserIpAdress();
+                connectionId = _userDetector.GetUserConnectionId();
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                user.FirstName = InformationCheckOut.FirstName;
+                user.LastName = InformationCheckOut.LastName;
+                user.PhoneNumber = InformationCheckOut.PhoneNumber;
+                user.Street = InformationCheckOut.Address;
+                user.State = InformationCheckOut.State;
+                user.City = InformationCheckOut.City;
+                user.Zipcode = InformationCheckOut.Zipcode;
+                user.Email = InformationCheckOut.Email;
+                user.UserName = InformationCheckOut.Email;
+                user.NormalizedUserName = InformationCheckOut.Email.ToUpper();
+                user.IpAdress = IpAddress;
+                user.ConnectionId = connectionId;
+
+
+
+
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                await _userManager.AddToRoleAsync(user, "NormalUser");
+
+                var callbackUrl = _generator.GetUriByPage(_httpContextAccessor.HttpContext,
+                  "/Account/ResetPassword",
+                  handler: null,
+                  values: new { area = "Identity", code },
+                  scheme: _httpContextAccessor.HttpContext.Request.Scheme);
+
+
+                await _emailSender.SendEmailAsync(
+                    user.Email,
+                    "Sveicināti R-KOM veikalā - Apstipriniet konta izveidi ",
+                    $"Lūdzu izveidojiet paroli <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Klikšķinot šeit</a>.");
+
+
+                _context.Update(user);
+                _context.SaveChanges();
+            }
+            else
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                user.FirstName = InformationCheckOut.FirstName;
+                user.LastName = InformationCheckOut.LastName;
+                user.PhoneNumber = InformationCheckOut.PhoneNumber;
+                user.Street = InformationCheckOut.Address;
+                user.State = InformationCheckOut.State;
+                user.City = InformationCheckOut.City;
+                user.Zipcode = InformationCheckOut.Zipcode;
+                user.Email = InformationCheckOut.Email;
+                user.IpAdress = IpAddress;
+                user.ConnectionId = connectionId;
+                user.Notes = InformationCheckOut.Notes;
+                _context.Update(user);
+                _context.SaveChanges();
+            }
+            await JSRuntime.InvokeAsync<string>("processToCheckOut", null);
+        }
+        else
+        {
+            await JSRuntime.InvokeAsync<string>("NeedItemInCart", null);
+        }
+
+    }
+
+    public async Task ChooseState()
+    {
+        await JSRuntime.InvokeAsync<string>("choose_state", null);
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeAsync<string>("sliderFunctions.startSlider", null);
+        await JSRuntime.InvokeAsync<string>("mobileFunction.startFunction", null);
+        //return base.OnAfterRenderAsync(firstRender);
+    }
+}

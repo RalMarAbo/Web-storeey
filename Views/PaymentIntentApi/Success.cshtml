@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewData["Title"] = "Success";
+    var TrackingNumber = (string)ViewBag.TrackingNumber;
+}
+
+<div class="jumbotron text-center" style="background-color:white;">
+    <h1 class="display-3">Paldies!</h1>
+    <p class="lead"><strong>Jūsu pasūtījums ir veiksmīgs!</strong></p>
+    <p class="lead">Izsekošanas numurs: <strong>@TrackingNumber</strong></p>
+    <hr>
+    <p>
+        Problēmas? <a asp-controller="Home" asp-action="Contact">Kontakti</a>
+    </p>
+    <p class="lead">
+        <a class="btn btn-primary btn-lg" asp-controller="Home" asp-action="Index" role="button">Turpināt iepirkties</a>
+    </p>
+</div>

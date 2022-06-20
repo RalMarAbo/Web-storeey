@@ -1,0 +1,46 @@
+﻿@page
+@model EnableAuthenticatorModel
+@{
+    ViewData["Title"] = "Configure authenticator app";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h4>@ViewData["Title"]</h4>
+<div>
+    <p>Lai lietotu 2 faktoru aizsardzību, izmantojiet autentifikatoru:</p>
+    <ol class="list">
+        <li>
+            <p>
+                Lejupielādējiet divu faktoru autentikator aplikāciju Google Authenticator priekš
+                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> vai
+                <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>.
+            </p>
+        </li>
+        <li>
+            <p>Noskenē qr vai ievadi kodu <kbd>@Model.SharedKey</kbd>Savā 2-FA aplikācijā</p>
+        </li>
+        <li>
+            <p>
+                Ievadi kodu ko izmet aplikācija
+            </p>
+            <div class="row">
+                <div class="col-md-6">
+                    <form id="send-code" method="post">
+                        <div class="form-group">
+                            <label asp-for="Input.Code" class="control-label">Apstiprinājuma kods:</label>
+                            <input asp-for="Input.Code" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="Input.Code" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Apstiprināt</button>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    </form>
+                </div>
+            </div>
+        </li>
+    </ol>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
